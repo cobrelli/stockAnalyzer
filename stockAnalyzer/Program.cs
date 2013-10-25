@@ -199,8 +199,6 @@ namespace stockAnalyzer
 
         }
 
-
-
     }
 
     /*
@@ -461,14 +459,14 @@ namespace stockAnalyzer
                     {
                         int val = (390 - ((Convert.ToInt32(hn.getList()[0].getValue() * multiplier))));
                         g.DrawString(hn.getList()[0].getValue().ToString(), new Font("Tahoma", 8), Brushes.Black, new RectangleF(50 + (35 * i), val - 20, 130 + (35 * i), 430));
-                        points[i] = new Point((i * 50) + 50, val);
+                        points[i] = new Point((i * 35) + 50, val);
                     }
                     //And we then know that start is greater than zero so we can get atleast previous value
                     else
                     {
                         int val = (390 - ((Convert.ToInt32(hn.getList()[(i - 1) + start].getValue() * multiplier))));
                         g.DrawString(hn.getList()[(i - 1) + start].getValue().ToString(), new Font("Tahoma", 8), Brushes.Black, new RectangleF(50 + (35 * i), val - 20, 130 + (35 * i), 430));
-                        points[i] = new Point((i * 50) + 50, val);
+                        points[i] = new Point((i * 35) + 50, val);
                     }
 
                 }
@@ -477,7 +475,7 @@ namespace stockAnalyzer
                 {
                     int val = (390 - ((Convert.ToInt32(hn.getList()[i + start].getValue() * multiplier))));
                     g.DrawString(hn.getList()[i + start].getValue().ToString(), new Font("Tahoma", 8), Brushes.Black, new RectangleF(50 + (35 * i), val - 20, 130 + (35 * i), 430));
-                    points[i] = new Point((i * 50) + 50, val);
+                    points[i] = new Point((i * 35) + 50, val);
                 }
 
             }
@@ -496,7 +494,7 @@ namespace stockAnalyzer
             }
 
 
-            img.Save(hn.getName() + "_chart.jpg");
+            //img.Save(hn.getName() + "_chart.jpg");
             return img;
         }
 
@@ -572,15 +570,6 @@ namespace stockAnalyzer
          */
         public void createPDF(stockList sl)
         {
-
-            //Hardcoded values for testing purposes, should be replaced by loop to create different documents
-            Image image = createChart(sl.getList()[1]);
-
-            iTextSharp.text.Paragraph name = new iTextSharp.text.Paragraph(sl.getList()[1].getName());
-
-            iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(image, System.Drawing.Imaging.ImageFormat.Gif);
-            //iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance("Affecto_chart.jpg");
-
             iTextSharp.text.Document doc = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4);
 
             PdfWriter w = PdfWriter.GetInstance(doc, new FileStream("lol.pdf", FileMode.Create));
@@ -593,13 +582,25 @@ namespace stockAnalyzer
             //Construct the first (index) page with all companies with their current stocks
             createFirstPage(sl, doc, w);
 
-            doc.NewPage();
+            foreach (headNode hn in sl.getList())
+            {
 
-            img.ScalePercent(60f);
-            //img.SetAbsolutePosition(doc.PageSize.Width -36f-420f, doc.PageSize.Height -36f-260f);
-            doc.Add(new iTextSharp.text.Paragraph(name));
+                doc.NewPage();
 
-            doc.Add(img);
+                //Hardcoded values for testing purposes, should be replaced by loop to create different documents
+                Image image = createChart(hn);
+                iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(image, System.Drawing.Imaging.ImageFormat.Gif);
+                img.ScalePercent(60f);
+                
+                iTextSharp.text.Paragraph name = new iTextSharp.text.Paragraph(hn.getName());
+                
+                doc.Add(new iTextSharp.text.Paragraph(name));
+
+                doc.Add(img);
+
+            }
+
+            
             doc.Close();
         }
     }
@@ -614,15 +615,15 @@ namespace stockAnalyzer
             DataManager dm = new DataManager();
             stockAnalyzer sa = new stockAnalyzer();
 
-            //ws.dlSite();
-            //List<String> l = ws.listFromFile();
-            //List<String> l1 = dm.cleanList(l);
+            ws.dlSite();
+            List<String> l = ws.listFromFile();
+            List<String> l1 = dm.cleanList(l);
 
-            //stockList sl = dm.constructAndUpdateDataStructure(l1);
-            //dm.saveList(sl);
+            stockList sl = dm.constructAndUpdateDataStructure(l1);
+            dm.saveList(sl);
 
             //For testing main program without downloading new content
-            stockList sl = dm.loadList();
+            //stockList sl = dm.loadList();
 
 
             //not necessarily needed but useful lines for testing
