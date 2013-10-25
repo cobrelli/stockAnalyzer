@@ -229,41 +229,41 @@ namespace stockAnalyzer
             string rubbish2 = "Aika";
 
             //Fileprint just for dev purposes and testing
-            using (StreamWriter w = new StreamWriter("cleaned.txt"))
+            //using (StreamWriter w = new StreamWriter("cleaned.txt"))
+            //{
+            foreach (string s in l)
             {
-                foreach (string s in l)
+                string s1 = Regex.Replace(s, pattern, String.Empty, RegexOptions.Multiline);
+                s1 = s1.Trim();
+
+                if (s1 != "" && s1 != rubbish && s1 != rubbish2)
                 {
-                    string s1 = Regex.Replace(s, pattern, String.Empty, RegexOptions.Multiline);
-                    s1 = s1.Trim();
-
-                    if (s1 != "" && s1 != rubbish && s1 != rubbish2)
+                    if (s1.Contains("Muutos") && !skip)
                     {
-                        if (s1.Contains("Muutos") && !skip)
+                        count = 1;
+                        skip = true;
+                        continue;
+                    }
+                    if (skip)
+                    {
+                        count++;
+                        if (count == 14)
                         {
-                            count = 1;
-                            skip = true;
-                            continue;
+                            skip = !skip;
                         }
-                        if (skip)
-                        {
-                            count++;
-                            if (count == 14)
-                            {
-                                skip = !skip;
-                            }
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (!skip)
-                        {
-                            //Save to file for inspection
-                            w.WriteLine(s1);
-                            //Console.WriteLine(s1);
-                            cleanedList.Add(s1);
-                        }
+                    if (!skip)
+                    {
+                        //Save to file for inspection
+                        //w.WriteLine(s1);
+                        //Console.WriteLine(s1);
+                        cleanedList.Add(s1);
                     }
                 }
             }
+            //}
             return cleanedList;
         }
 
@@ -510,7 +510,7 @@ namespace stockAnalyzer
             {
                 g.DrawCurve(Pens.Black, points);
             }
-            
+
 
             img.Save(hn.getName() + "_chart.jpg");
             return img;
@@ -554,12 +554,12 @@ namespace stockAnalyzer
 
             col.Alignment = iTextSharp.text.Element.ALIGN_JUSTIFIED;
 
-            
-            
+
+
             iTextSharp.text.Paragraph frontPageParag = new iTextSharp.text.Paragraph(frontPage);
 
-            col.AddText(new iTextSharp.text.Chunk(frontPage));
-            col.AddElement(new iTextSharp.text.Paragraph(frontPage));
+            //col.AddText(new iTextSharp.text.Chunk(frontPage));
+            //col.AddElement(new iTextSharp.text.Paragraph(frontPage));
             //col.SetColumns(left, right);
 
             for (int i = 0; i < sl.getList().Count(); i++)
@@ -567,8 +567,8 @@ namespace stockAnalyzer
                 String colString = "";
                 //for (int j = 0; j < 38; j++)
                 //{
-                    colString += companies[i];
-                    colString += "\n";
+                colString += companies[i];
+                colString += "\n";
                 //}
                 col.AddElement(new iTextSharp.text.Paragraph(colString));
                 //Console.WriteLine(colString);
@@ -582,7 +582,7 @@ namespace stockAnalyzer
                 if (loop % 2 != 0)
                 {
                     col.SetSimpleColumn((doc.PageSize.Width / 2) + 5, 72, (doc.PageSize.Width) - 72, doc.PageSize.Height - 72);
-                    
+
                 }
                 else
                 {
@@ -593,7 +593,7 @@ namespace stockAnalyzer
                 status = col.Go();
             }
 
-            
+
 
             //iTextSharp.text.Paragraph frontPageParag = new iTextSharp.text.Paragraph(frontPage);
 
@@ -608,7 +608,7 @@ namespace stockAnalyzer
         public void createPDF(stockList sl)
         {
 
-            //kovakoodattu testiarvo
+            //Hardcoded values for testing purposes, should be replaced by loop to create different documents
             Image image = createChart(sl.getList()[1]);
 
             iTextSharp.text.Paragraph name = new iTextSharp.text.Paragraph(sl.getList()[1].getName());
@@ -647,34 +647,39 @@ namespace stockAnalyzer
 
         static void Main(string[] args)
         {
+            //Main program's required components
             WebScraper ws = new WebScraper();
             DataManager dm = new DataManager();
             stockAnalyzer sa = new stockAnalyzer();
 
-            ws.dlSite();
-            List<String> l = ws.listFromFile();
-            List<String> l1 = dm.cleanList(l);
+            //ws.dlSite();
+            //List<String> l = ws.listFromFile();
+            //List<String> l1 = dm.cleanList(l);
 
-            stockList sl = dm.constructAndUpdateDataStructure(l1);
-            dm.saveList(sl);
+            //stockList sl = dm.constructAndUpdateDataStructure(l1);
+            //dm.saveList(sl);
 
-            //stockList sl = dm.loadList();
+            //For testing main program without downloading new content
+            stockList sl = dm.loadList();
 
-            //Console.WriteLine(sl.toString());
 
-            //using (StreamWriter w = new StreamWriter("stock_data2.txt"))
-            //{
-            //    w.WriteLine(sl.toString());
-            //}
+            //not necessarily needed but useful lines for testing
+            //////Console.WriteLine(sl.toString());
 
-            //sa.createChart(sl.getList()[0]);
-            //sa.createChart(sl.getList()[1]);
-            //sa.createChart(sl.getList()[2]);
-            //sa.createChart(sl.getList()[4]);
+            //////using (StreamWriter w = new StreamWriter("stock_data2.txt"))
+            //////{
+            //////    w.WriteLine(sl.toString());
+            //////}
 
+            //////sa.createChart(sl.getList()[0]);
+            //////sa.createChart(sl.getList()[1]);
+            //////sa.createChart(sl.getList()[2]);
+            //////sa.createChart(sl.getList()[4]);
+
+            //creation of the analysis and visualization
             sa.createPDF(sl);
 
-
+            //to prevent quit exit and allow to see Console prints
             Console.ReadLine();
         }
     }
