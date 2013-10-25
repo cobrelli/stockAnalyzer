@@ -405,15 +405,15 @@ namespace stockAnalyzer
         {
         }
 
+        /*
+         * Create a chart from given headNode
+         */
         public Image createChart(headNode hn)
         {
-            //headNode hn = sl.getList()[0];
-
             Image img = new Bitmap(800, 500);
             Graphics g = Graphics.FromImage(img);
             g.Clear(Color.White);
             Rectangle r = new Rectangle(49, 50, 700, 340);
-            //g.DrawEllipse(Pens.Red, g.VisibleClipBounds);
             g.DrawRectangle(Pens.Black, r);
 
             // Draws lines for chart
@@ -421,22 +421,6 @@ namespace stockAnalyzer
             {
                 g.DrawLine(Pens.LightGray, 50, (20 * i) + 50, 748, (20 * i) + 50);
             }
-
-            //Point[] points = new Point[10];
-            //points[0] = new Point(100, 200);
-            //points[1] = new Point(200, 300);
-            //points[2] = new Point(300, 220);
-            //points[3] = new Point(400, 250);
-            //points[4] = new Point(500, 200);
-            //points[5] = new Point(600, 220);
-            //points[6] = new Point(700, 250);
-            //points[7] = new Point(800, 200);
-            //points[8] = new Point(900, 250);
-            //points[9] = new Point(998, 200);
-            //g.DrawPolygon(Pens.Black, points);
-
-            //Draw name of the company
-            //g.DrawString(hn.getName(), new Font("Tahoma", 12), Brushes.Black, new RectangleF(0, 0, 100, 100));
 
             int size = hn.getList().Count();
             int start;
@@ -527,6 +511,7 @@ namespace stockAnalyzer
 
             String frontPage = "";
 
+            //Build the initial showable string from different nodes
             foreach (headNode hn in sl.getList())
             {
                 int count = 1;
@@ -548,35 +533,26 @@ namespace stockAnalyzer
             //Console.WriteLine(frontPage);
 
             String[] companies = frontPage.Split(new String[] { "\n" }, StringSplitOptions.None);
-            //int perCol = companies.Count();
 
             iTextSharp.text.pdf.ColumnText col = new iTextSharp.text.pdf.ColumnText(w.DirectContent);
 
             col.Alignment = iTextSharp.text.Element.ALIGN_JUSTIFIED;
 
-
-
             iTextSharp.text.Paragraph frontPageParag = new iTextSharp.text.Paragraph(frontPage);
 
-            //col.AddText(new iTextSharp.text.Chunk(frontPage));
-            //col.AddElement(new iTextSharp.text.Paragraph(frontPage));
-            //col.SetColumns(left, right);
-
+            //Put the strings in colStrings that fit the page nicely
             for (int i = 0; i < sl.getList().Count(); i++)
             {
                 String colString = "";
-                //for (int j = 0; j < 38; j++)
-                //{
                 colString += companies[i];
                 colString += "\n";
-                //}
                 col.AddElement(new iTextSharp.text.Paragraph(colString));
-                //Console.WriteLine(colString);
                 colString = "";
             }
 
             int status = 0;
             int loop = 0;
+            //Build the actual columns into pdf
             while (ColumnText.HasMoreText(status))
             {
                 if (loop % 2 != 0)
@@ -593,12 +569,7 @@ namespace stockAnalyzer
                 status = col.Go();
             }
 
-
-
             //iTextSharp.text.Paragraph frontPageParag = new iTextSharp.text.Paragraph(frontPage);
-
-
-
             //doc.Add(frontPageParag);
         }
 
