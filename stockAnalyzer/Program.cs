@@ -14,6 +14,9 @@ using iTextSharp.text.pdf;
 namespace stockAnalyzer
 {
 
+    /*
+     * The main list containing companies and their values
+     */
     class stockList
     {
         List<headNode> list;
@@ -67,6 +70,9 @@ namespace stockAnalyzer
         }
     }
 
+    /*
+     * The first node in a list containing different stockvalues from different dates
+     */
     class headNode
     {
         String name;
@@ -110,6 +116,9 @@ namespace stockAnalyzer
         }
     }
 
+    /*
+     * Basic node for a stock object containing name of the company, date and stockvalue on that date
+     */
     class stockNode
     {
         String name;
@@ -572,7 +581,7 @@ namespace stockAnalyzer
         {
             iTextSharp.text.Document doc = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4);
 
-            PdfWriter w = PdfWriter.GetInstance(doc, new FileStream("lol.pdf", FileMode.Create));
+            PdfWriter w = PdfWriter.GetInstance(doc, new FileStream("stock.pdf", FileMode.Create));
             w.CloseStream = false;
             doc.Open();
 
@@ -585,7 +594,6 @@ namespace stockAnalyzer
             //Construct page for each company and a graph for the company
             foreach (headNode hn in sl.getList())
             {
-
                 doc.NewPage();
 
                 Image image = createChart(hn);
