@@ -533,11 +533,8 @@ namespace stockAnalyzer
             //Console.WriteLine(frontPage);
 
             String[] companies = frontPage.Split(new String[] { "\n" }, StringSplitOptions.None);
-
             iTextSharp.text.pdf.ColumnText col = new iTextSharp.text.pdf.ColumnText(w.DirectContent);
-
             col.Alignment = iTextSharp.text.Element.ALIGN_JUSTIFIED;
-
             iTextSharp.text.Paragraph frontPageParag = new iTextSharp.text.Paragraph(frontPage);
 
             //Put the strings in colStrings that fit the page nicely
@@ -568,9 +565,6 @@ namespace stockAnalyzer
                 loop++;
                 status = col.Go();
             }
-
-            //iTextSharp.text.Paragraph frontPageParag = new iTextSharp.text.Paragraph(frontPage);
-            //doc.Add(frontPageParag);
         }
 
         /*
@@ -596,7 +590,7 @@ namespace stockAnalyzer
             //Add current stock values on the first page along with link to page with detailed info
             doc.NewPage();
 
-            //Construct strings in nice forms with padding
+            //Construct the first (index) page with all companies with their current stocks
             createFirstPage(sl, doc, w);
 
             doc.NewPage();
@@ -607,11 +601,8 @@ namespace stockAnalyzer
 
             doc.Add(img);
             doc.Close();
-
-
         }
     }
-
 
     class Program
     {
