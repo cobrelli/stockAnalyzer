@@ -582,12 +582,12 @@ namespace stockAnalyzer
             //Construct the first (index) page with all companies with their current stocks
             createFirstPage(sl, doc, w);
 
+            //Construct page for each company and a graph for the company
             foreach (headNode hn in sl.getList())
             {
 
                 doc.NewPage();
 
-                //Hardcoded values for testing purposes, should be replaced by loop to create different documents
                 Image image = createChart(hn);
                 iTextSharp.text.Image img = iTextSharp.text.Image.GetInstance(image, System.Drawing.Imaging.ImageFormat.Gif);
                 img.ScalePercent(60f);
@@ -599,7 +599,6 @@ namespace stockAnalyzer
                 doc.Add(img);
 
             }
-
             
             doc.Close();
         }
